@@ -69,11 +69,10 @@ $result = $conn->query($sql);
             color: #5d4037;
         }
 
-        /* New styles for the navigation links */
         .nav-links {
             display: flex;
-            justify-content: center; /* Center the group of buttons */
-            gap: 15px; /* Space between buttons */
+            justify-content: center;
+            gap: 15px;
             margin-top: 20px;
             margin-bottom: 20px;
         }
@@ -88,7 +87,7 @@ $result = $conn->query($sql);
         }
 
         .nav-link:hover {
-            background-color: #4e342e; /* Slightly darker on hover */
+            background-color: #4e342e;
         }
     </style>
 </head>
