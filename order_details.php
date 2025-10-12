@@ -1,24 +1,20 @@
 <?php
 session_start();
-include 'config.php'; 
+include 'config.php';
 
-// CRITICAL SECURITY CHECK
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
     exit;
 }
 
-// 1. Get the Order ID from the URL
 $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($order_id === 0) {
     die("Invalid Order ID provided.");
 }
 
-// 2. Fetch the specific items in the order
-// Joins order_items and drinks to get the drink name
 $item_sql = "
-    SELECT 
+    SELECT
         d.name AS drink_name,
         oi.quantity,
         oi.price_at_order
@@ -32,11 +28,10 @@ $stmt->bind_param("i", $order_id);
 $stmt->execute();
 $items_result = $stmt->get_result();
 
-// 3. Fetch the primary order details (like customer name and total)
 $order_sql = "
     SELECT u.username, o.total_price, o.status, o.order_date
-    FROM orders o 
-    JOIN users u ON o.user_id = u.id 
+    FROM orders o
+    JOIN users u ON o.user_id = u.id
     WHERE o.id = ?
 ";
 $order_stmt = $conn->prepare($order_sql);
@@ -60,9 +55,9 @@ $conn->close();
     <div class="container">
         <h1>Details for Order #<?= $order_id ?></h1>
         <p>
-            **Customer:** <?= htmlspecialchars($order_details['username']) ?> | 
-            **Date:** <?= htmlspecialchars(date("Y-m-d H:i", strtotime($order_details['order_date']))) ?> | 
-            **Status:** <?= htmlspecialchars($order_details['status']) ?>
+            <strong>Customer:</strong> <?= htmlspecialchars($order_details['username']) ?> |
+            <strong>Date:</strong> <?= htmlspecialchars(date("Y-m-d H:i", strtotime($order_details['order_date']))) ?> |
+            <strong>Status:</strong> <?= htmlspecialchars($order_details['status']) ?>
         </p>
         <a href="admin_dashboard.php">← Back to Dashboard</a>
         
