@@ -1,19 +1,18 @@
 <?php
 session_start();
-include 'config.php'; 
+include 'config.php';
 
-// CRITICAL SECURITY CHECK
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: index.php');
     exit;
 }
 
 $sql = "
-    SELECT 
-        o.id AS order_id, 
-        u.username AS customer_name, 
-        o.order_date, 
-        o.total_price, 
+    SELECT
+        o.id AS order_id,
+        u.username AS customer_name,
+        o.order_date,
+        o.total_price,
         o.status
     FROM orders o
     JOIN users u ON o.user_id = u.id
@@ -46,7 +45,6 @@ $result = $conn->query($sql);
             if ($result && $result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    // Link to order_details.php to see WHAT was ordered
                     echo "<td><a href='order_details.php?id=" . $row['order_id'] . "'>#" . $row['order_id'] . "</a></td>";
                     echo "<td>" . htmlspecialchars($row['customer_name']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['order_date']) . "</td>";
