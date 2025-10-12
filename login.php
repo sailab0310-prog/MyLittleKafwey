@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'config.php'; // Includes your database connection
+include 'config.php';
 
 $message = '';
 
@@ -8,8 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    // 1. Prepare and execute SELECT statement
-    // We fetch the user's ID and the stored password hash
     $stmt = $conn->prepare("SELECT id, username, password_hash, role FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -18,14 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         
-        // 2. Verify the submitted password against the stored hash
         if (password_verify($password, $user['password_hash'])) {
-            // Login Successful!
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role']; // Store the role for admin checks later
+            $_SESSION['role'] = $user['role'];
 
-            // Redirect the user back to the menu (or a profile page)
             header('Location: index.php');
             exit;
         } else {
