@@ -1,7 +1,6 @@
 <?php
 session_start();
-// Include the database connection from config.php
-include 'config.php'; 
+include 'config.php';
 
 $message = '';
 
@@ -10,25 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    // 1. Basic validation
     if (empty($username) || empty($email) || empty($password)) {
         $message = "Please fill in all fields.";
     } 
-    // 2. Hash the password securely
     else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        // Use prepared statements for security against SQL injection
         $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $email, $hashed_password);
 
         if ($stmt->execute()) {
             $message = "Sign up successful! You can now <a href='login.php'>Login</a>.";
-            // Optional: Redirect to login page
-            // header('Location: login.php');
-            // exit;
         } else {
-            // Error handling for duplicate entry (e.g., username/email already exists)
             $message = "Error: Username or Email already taken.";
         }
         $stmt->close();
