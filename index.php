@@ -4,13 +4,17 @@ include 'config.php';
 
 $sql = "SELECT id, name, price FROM drinks";
 $result = $conn->query($sql);
+
+$is_admin_logged_in = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Little Kafwey</title>
+    <title>Bananarama Café</title>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,7 +40,9 @@ $result = $conn->query($sql);
         }
 
         h1 {
+            font-family: 'IM Fell English SC', serif;
             color: #5d4037;
+            font-size: 3em;
         }
 
         ul {
@@ -71,7 +77,7 @@ $result = $conn->query($sql);
 
         .nav-links {
             display: flex;
-            justify-content: center;
+            justify-content: center; 
             gap: 15px;
             margin-top: 20px;
             margin-bottom: 20px;
@@ -89,22 +95,39 @@ $result = $conn->query($sql);
         .nav-link:hover {
             background-color: #4e342e;
         }
+        
+        .admin-link {
+            background-color: #795548;
+        }
+
+        .orders-link {
+            background-color: #8D6E63;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>My Little Kafwey</h1>
+        <h1>Bananarama Café</h1>
         <h2>Our Ice Blended Drinks Menu</h2>
         
         <div class="nav-links">
-            <?php if (!isset($_SESSION['user_id'])): ?>
-                <a href="login.php" class="nav-link">Login</a>
-                <a href="signup.php" class="nav-link">Sign Up</a>
+            <?php if (!$is_admin_logged_in): ?>
+                <?php if (!isset($_SESSION['user_id'])): ?>
+                    <a href="login.php" class="nav-link">Login</a>
+                    <a href="signup.php" class="nav-link">Sign Up</a>
+                <?php else: ?>
+                    <a href="profile.php" class="nav-link">Welcome, User!</a>
+                    <a href="logout.php" class="nav-link">Logout</a>
+                <?php endif; ?>
+                <a href="cart.php" class="nav-link">View My Cart</a>
+                
+                <a href="admin_login.php" class="nav-link admin-link">Admin Login</a>
+
             <?php else: ?>
-                <a href="profile.php" class="nav-link">Welcome, User!</a>
-                <a href="logout.php" class="nav-link">Logout</a>
+                <a href="admin_dashboard.php" class="nav-link orders-link">📊 View Orders</a>
+                
+                <a href="logout.php?admin=true" class="nav-link admin-link">Admin Logout (<?php echo htmlspecialchars($_SESSION['admin_user']); ?>)</a>
             <?php endif; ?>
-            <a href="cart.php" class="nav-link">View My Cart</a>
         </div>
         
         <ul>
